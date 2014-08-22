@@ -1,0 +1,8 @@
+Changes
+LICENSE
+Makefile.PL
+MANIFEST
+README
+t/HeliosX-Job-JSON.t
+lib/HeliosX/Job/JSON.pm
+helios_job_submit_json
