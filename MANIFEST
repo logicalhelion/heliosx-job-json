@@ -1,8 +1,10 @@
 Changes
+helios_job_submit_json
+lib/HeliosX/Job/JSON.pm
+lib/HeliosX/Job/JSON/Error.pm
+lib/HeliosX/Job/JSON/TestService.pm
 LICENSE
 Makefile.PL
 MANIFEST
 README
 t/HeliosX-Job-JSON.t
-lib/HeliosX/Job/JSON.pm
-helios_job_submit_json

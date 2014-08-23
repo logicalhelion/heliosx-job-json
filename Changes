@@ -1,5 +1,9 @@
 Revision history for Perl extension HeliosX::Job::JSON.
 
+0.01_3460  Sat Aug 23 15:29:00 2014
+	- Added functional helios_job_submit_json.
+	- Added HeliosX::Job::JSON::TestService to test JSON parsing and
+	  as an example service.
 0.01  Fri Aug 22 11:34:18 2014
 	- original version; created by h2xs 1.23 with options
 		-XA -b 5.10.0 HeliosX::Job::JSON

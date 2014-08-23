@@ -11,7 +11,7 @@ $JSON::Tiny::FALSE = 0;
 
 use HeliosX::Job::JSON::Error;
 
-our $VERSION = '0.01_3450';
+our $VERSION = '0.01_3460';
 
 =head1 NAME
 
