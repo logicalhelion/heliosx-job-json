@@ -13,7 +13,7 @@ use Helios;
 use Helios::Config;
 use HeliosX::Job::JSON;
 
-our $VERSION = '0.01_3460';
+our $VERSION = '0.02_3670';
 
 our $OPT_HELP = 0;
 our $OPT_VERSION = 0;
@@ -115,36 +115,36 @@ exit(0);
 
 =head1 NAME
 
-helios_job_submit_json - tool to submit Helios jobs with JSON arguemnts from the command line
+heliosx_job_json_submit - tool to submit Helios jobs with JSON arguments from the command line
 
 =head1 SYNOPSIS
 
  # full syntax
- helios_job_submit_json [--jobtype=<jobtype>] [--args=<json arg string>]
+ heliosx_job_json_submit [--jobtype=<jobtype>] [--args=<json arg string>]
 
  # example with full switches
- helios_job_submit_json --jobtype=MyService --args='{ "args": {"arg1": "value1", "arg2": 30} }'
+ heliosx_job_json_submit --jobtype=MyService --args='{ "args": {"arg1": "value1", "arg2": 30} }'
 
  # you can omit the switch names
- helios_job_submit_json MyService '{ "args": {"arg1": "value1", "arg2": 30} }'
+ heliox_job_json_submit MyService '{ "args": {"arg1": "value1", "arg2": 30} }'
 
 =head1 DESCRIPTION
 
-The helios_job_submit_json command can be used to submit jobs specified in JSON
-format to a Helios collective from the command line.  It is is more or less a 
-substitute for helios_job_submit.pl using JSON instead of Helios's default 
-job argument XML.
+The heliosx_job_json_submit command can be used to submit jobs specified in 
+JSON format to a Helios collective from the command line.  It is is more or 
+less a substitute for helios_job_submit.pl using JSON instead of Helios's 
+default job argument XML.
 
 =head1 OPTIONS
 
 =head2 --jobtype
 
-The jobtype of the job.  If not specified, helios_job_submit_json will 
-attempt to pull it from the parsed JSON argument string.
+The jobtype of the job.  If not specified, the command will use the "jobtype" 
+attribute of the specified JSON object string.
 
 =head2 --args
 
-The job arguments, in JSON format.  If not specified, helios_job_submit_json 
+The job argument string, in JSON format.  If not specified, the command will 
 will read it from STDIN.
  
 =head2 --version
@@ -158,26 +158,26 @@ Displays this help page.
 
 =head1 JOB ARGUMENT JSON
 
-Job argument JSON should describe a JSON object:
+Helios job argument JSON should describe a JSON object:
 
  {
- 	"jobtype" : I<Helios jobtype name>,
- 	"args" : {
- 				I<arg1 name> : I<arg1 value>,
- 				I<arg2 name> : I<arg2 value>,
- 				I<...etc...>
- 			}
+     "jobtype" : "<Helios jobtype name>",
+     "args" : {
+         "<arg1 name>" : "<arg1 value>",
+         "<arg2 name>" : "<arg2 value>",
+         ...etc...
+     }
  }
 
 For example, for a job of type MyService with 2 arguments, filename and 
 thumbnail_size:
 
  {
- 	"jobtype" : "MyService",
- 	"args" : {
- 				"filename" : "photo.jpg",
- 				"thumbnail_size" : "100x100"
- 			}
+     "jobtype" : "MyService",
+     "args" : {
+               "filename" : "photo.jpg",
+               "thumbnail_size" : "100x100"
+              }
  }
 
 

@@ -9,9 +9,10 @@ use JSON::Tiny qw(decode_json);
 $JSON::Tiny::TRUE  = 1;
 $JSON::Tiny::FALSE = 0;
 
+use Helios::Config;
 use HeliosX::Job::JSON::Error;
 
-our $VERSION = '0.01_3460';
+our $VERSION = '0.02_3670';
 
 =head1 NAME
 
@@ -19,7 +20,7 @@ HeliosX::Job::JSON - Helios::Job subclass using JSON to specify job arguments
 
 =head1 SYNOPSIS
 
- # in your Helios::Service class
+ # In your Helios::Service class:
  package MyService;
  use parent 'Helios::Service';
  use HeliosX::Job::JSON;
@@ -32,7 +33,8 @@ HeliosX::Job::JSON - Helios::Job subclass using JSON to specify job arguments
  
  1;
  
- # in your job submission code, use HeliosX::Job::JSON just like Helios::Job
+ # In your job submission code, use 
+ # HeliosX::Job::JSON just like Helios::Job.
  my $config = Helios::Config->parseConfig();
  my $arg_json = qq/{ "args" : { "arg1": "value1", "arg2": "string2" } }/; 
  my $job = HeliosX::Job::JSON->new();
@@ -40,9 +42,29 @@ HeliosX::Job::JSON - Helios::Job subclass using JSON to specify job arguments
  $job->setJobType('MyService');
  $job->setArgString($arg_json);
  my $jobid = $job->submit();
+
+ # You may also specify the config, jobtype, 
+ # and argument string to the constructor.
+ my $arg_json = qq/{ "args" : { "arg1": "value1", "arg2": "string2" } }/; 
+ my $job = HeliosX::Job::JSON->new(
+ 	config    => $config,
+ 	jobtype   => 'MyService',
+ 	argstring => $arg_json
+ );
+ my $jobid = $job->submit();
  
- # or use the included helios_job_submit_json command 
- helios_job_submit_json MyService '{ "args" : { "arg1": "value1", "arg2": "string2" } }'
+ # Also, if you omit config, HeliosX::Job::JSON will 
+ # use Helios::Config to get the config hash.
+ # If you specify the jobtype in the JSON object string,
+ # you do not have to specify a specific jobtype
+ my $arg_json = qq/{ "jobtype" : "MyService", "args" : { "arg1": "value1", "arg2": "string2" } }/; 
+ my $job = HeliosX::Job::JSON->new(
+ 	argstring => $arg_json
+ );
+ my $jobid = $job->submit();
+
+ # Or use the included helios_job_submit_json command. 
+ heliosx_job_json_submit --jobtype=MyService --args='{ "args" : { "arg1": "value1", "arg2": "string2" } }'
 
 
 =head1 DESCRIPTION
@@ -61,18 +83,19 @@ as an example:
  {
      "jobtype" : "Helios::TestService",
      "args": {
-         "arg1"          : "value1",
-         "arg2"          : "value2",
-         "original_file" : "photo.jpg",
-         "size"          : "125x125"
-     }
+              "arg1"          : "value1",
+              "arg2"          : "value2",
+              "original_file" : "photo.jpg",
+              "size"          : "125x125"
+             }
  }
 
-Your JSON object will define a "jobtype" string and an "args" object.  The 
-name and value pairs of the args object will become the job's argument hash.
+Your JSON object string will define a "jobtype" string and an "args" object.  
+The name and value pairs of the args object will become the job's argument 
+hash.
 
 The jobtype value is optional if you specify a jobtype another way i.e. using 
-the --jobtype option with helios_job_submit_json or using HeliosX::Job::JSON's 
+the --jobtype option with heliosx_job_json_submit or using HeliosX::Job::JSON's 
 setJobType() method.
 
 =head1 NOTE ABOUT METAJOBS
@@ -82,11 +105,39 @@ arguments in JSON may be supported in a future release.
 
 =head1 METHODS
 
+=head2 new()
+
+The HeliosX::Job::JSON new() constructor overrides Helios::Job's constructor 
+to allow you to specify the Helios config hash, jobtype, and argument string 
+without making separate subsequent method calls to setConfig(), setJobType(),
+or setArgString().  
+
+=cut
+
+sub new {
+	my $cl = shift;
+	my $self;
+	if ( @_ && ref($_[0]) && ref($_[0]) eq 'Helios::TS::Job' ) {
+		$self = $cl->SUPER::new(@_);
+	} else {
+		$self = $cl->SUPER::new();
+	}
+	bless($self, $cl);
+	if (@_ > 1) {
+		my %params = @_;
+		if ( $params{config}    ) { $self->setConfig($params{config});       }
+		if ( $params{jobtype}   ) { $self->setJobType($params{jobtype});     }
+		if ( $params{argstring} ) { $self->setArgString($params{argstring}); }			
+	}
+	return $self;
+}
+
 =head2 parseArgs()
 
 HeliosX::Job::JSON's parseArgs() method is much simpler than Helios::Job's 
-because JSON's object format is very close to Perl's concept of a hash.  
- 
+parseArgs() method because JSON's object format is very close to Perl's concept
+of a hash.      
+
 =cut
 
 sub parseArgs {
@@ -109,7 +160,8 @@ sub parseArgs {
 =head2 parseArgString($json_string)
 
 The parseArgString() method does the actual parsing of the JSON object string 
-into the Perl hash using JSON::Tiny.  
+into the Perl hash using JSON::Tiny.  If parsing fails, the method will throw 
+a HeliosX::Job::JSON::Error exception.
 
 =cut
 
@@ -131,11 +183,19 @@ sub parseArgString {
 
 =head2 submit() 
 
-HeliosX::Job::JSON's submit() method is actually a shell around Helios::Job's 
-submit() to allow specifying the jobtype via the JSON object instead of 
-requiring a separate call to setJobType().  If the jobtype wasn't explicitly 
-specified and submit() cannot determine the jobtype from the JSON object, 
-it will throw a HeliosX::Job::JSON::Error exception.
+HeliosX::Job::JSON's submit() method overrides Helios::Job's submit() to allow 
+specifying the jobtype via the JSON object instead of requiring a separate call
+to setJobType().  If the jobtype wasn't explicitly specified and submit() 
+cannot determine the jobtype from the JSON object, it will throw a 
+HeliosX::Job::JSON::Error exception.
+
+Also, if the config hash was not explicitly specified with either a config 
+parameter to new() or the setConfig() method,  submit() will use 
+Helios::Config->parseConfig() to get the collective database's dsn, user, and 
+password values in the [global] section of the Helios configuration.
+
+If job submission is successful, this method will return the new job's jobid 
+to the calling routine.  
 
 =cut
 
@@ -155,6 +215,13 @@ sub submit {
 			# we can't submit!!
 			HeliosX::Job::JSON::Error->throw("HeliosX::Job::JSON::Error->throw(): No jobtype specified!");
 		}
+	}
+
+	# if setConfig() wasn't used to pass the config,
+	# attempt to use Helios::Config to parse the global config
+	unless ( $self->getConfig() ) {
+		my $conf = Helios::Config->parseConfig();
+		$self->setConfig($conf);
 	}
 	
 	return $self->SUPER::submit();

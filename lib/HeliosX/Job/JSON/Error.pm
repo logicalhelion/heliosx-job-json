@@ -5,5 +5,7 @@ use strict;
 use warnings;
 use base 'Helios::Error::BaseError';
 
+our $VERSION = '0.02_3670';
+
 1;
 __END__

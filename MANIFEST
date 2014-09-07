@@ -1,5 +1,5 @@
 Changes
-helios_job_submit_json
+heliosx_job_json_submit
 lib/HeliosX/Job/JSON.pm
 lib/HeliosX/Job/JSON/Error.pm
 lib/HeliosX/Job/JSON/TestService.pm
