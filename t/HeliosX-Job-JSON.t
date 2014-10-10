@@ -1,10 +1,7 @@
 # Before `make install' is performed this script should be runnable with
 # `make test'. After `make install' it should work as `perl HeliosX-Job-JSON.t'
 
-#########################
-
-# change 'tests => 1' to 'tests => last_test_to_print';
-
+use 5.008;
 use strict;
 use warnings;
 
@@ -32,9 +29,4 @@ my $job_args2 = $job2->parseArgString( $job2->getArgString());
 is($jt2, 'HeliosX::Job::JSON::TestService', 'The jobtype is HeliosX::Job::JSON::TestService');
 is($job_args2->{args}->{arg1}, 'value1', 'The value of arg1 is correct');
 is($job_args2->{args}->{arg2}, 'value2', 'The value of arg2 is correct');
-
-#########################
-
-# Insert your test code below, the Test::More module is use()ed here so read
-# its man page ( perldoc Test::More ) for help writing this test script.
 

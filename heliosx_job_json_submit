@@ -13,7 +13,7 @@ use Helios;
 use Helios::Config;
 use HeliosX::Job::JSON;
 
-our $VERSION = '0.02_3670';
+our $VERSION = '1.00';
 
 our $OPT_HELP = 0;
 our $OPT_VERSION = 0;
@@ -126,7 +126,7 @@ heliosx_job_json_submit - tool to submit Helios jobs with JSON arguments from th
  heliosx_job_json_submit --jobtype=MyService --args='{ "args": {"arg1": "value1", "arg2": 30} }'
 
  # you can omit the switch names
- heliox_job_json_submit MyService '{ "args": {"arg1": "value1", "arg2": 30} }'
+ heliosx_job_json_submit MyService '{ "args": {"arg1": "value1", "arg2": 30} }'
 
 =head1 DESCRIPTION
 
@@ -146,7 +146,7 @@ attribute of the specified JSON object string.
 
 The job argument string, in JSON format.  If not specified, the command will 
 will read it from STDIN.
- 
+
 =head2 --version
 
 Displays the versions of the command, HeliosX::Job::JSON, and the Helios 
@@ -180,10 +180,6 @@ thumbnail_size:
               }
  }
 
-
-=head1 SEE ALSO
-
-L<HeliosX::Job::JSON>, L<Helios>
 
 =head1 AUTHOR
 

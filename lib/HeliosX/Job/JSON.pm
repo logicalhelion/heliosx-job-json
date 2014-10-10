@@ -12,7 +12,7 @@ $JSON::Tiny::FALSE = 0;
 use Helios::Config;
 use HeliosX::Job::JSON::Error;
 
-our $VERSION = '0.02_3670';
+our $VERSION = '1.00';
 
 =head1 NAME
 
@@ -63,7 +63,7 @@ HeliosX::Job::JSON - Helios::Job subclass using JSON to specify job arguments
  );
  my $jobid = $job->submit();
 
- # Or use the included helios_job_submit_json command. 
+ # Or use the included heliosx_job_json_submit command. 
  heliosx_job_json_submit --jobtype=MyService --args='{ "args" : { "arg1": "value1", "arg2": "string2" } }'
 
 
@@ -77,11 +77,23 @@ to use HeliosX::Job::JSON to specify your job arguments in JSON.
 
 =head1 JSON JOB ARGUMENT FORMAT
 
-To specify a Helios job's arguments in JSON, use the following JSON object 
-as an example: 
+Helios job argument JSON should describe a JSON object in the format:
 
  {
-     "jobtype" : "Helios::TestService",
+     "jobtype" : "<Helios jobtype name>",
+     "args" : {
+         "<arg1 name>" : "<arg1 value>",
+         "<arg2 name>" : "<arg2 value>",
+         ...etc...
+     }
+ }
+
+Your JSON object string will define a "jobtype" string and an "args" object.  
+The name and value pairs of the args object will become the job's argument 
+hash.  For example:
+
+ {
+     "jobtype" : "MyService",
      "args": {
               "arg1"          : "value1",
               "arg2"          : "value2",
@@ -89,10 +101,6 @@ as an example:
               "size"          : "125x125"
              }
  }
-
-Your JSON object string will define a "jobtype" string and an "args" object.  
-The name and value pairs of the args object will become the job's argument 
-hash.
 
 The jobtype value is optional if you specify a jobtype another way i.e. using 
 the --jobtype option with heliosx_job_json_submit or using HeliosX::Job::JSON's 
@@ -230,10 +238,6 @@ sub submit {
 
 1;
 __END__
-
-=head1 SEE ALSO
-
-L<Helios>, L<Helios::Job>, L<JSON::Tiny>
 
 =head1 AUTHOR
 

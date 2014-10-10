@@ -1,5 +1,7 @@
 Revision history for Perl extension HeliosX::Job::JSON.
 
+1.00  Fri Oct 10 14:19:06 2014
+	- Documentation updates only.
 0.02_3670  Sun Sep  7 18:25:16 2014
 	- HeliosX::Job::JSON->new() constructor now allows config, 
 	  jobtype, and argstring to be passed into new() instead of 
